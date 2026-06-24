@@ -1,5 +1,6 @@
 package jobportal.controller;
 
+import jobportal.dto.request.LoginRequest;
 import jobportal.dto.request.RegisterRequest;
 import jobportal.service.AuthService;
 import jobportal.service.Impl.AuthServiceImpl;
@@ -27,4 +28,14 @@ public class AuthController {
                 authService.register(request)
         );
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(
+            @RequestBody LoginRequest request) {
+
+        return ResponseEntity.ok(
+                authService.login(request)
+        );
+    }
+
 }
