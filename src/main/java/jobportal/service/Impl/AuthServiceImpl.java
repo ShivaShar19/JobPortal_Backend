@@ -7,7 +7,7 @@ import jobportal.dto.response.AuthResponse;
 import jobportal.entity.Role;
 import jobportal.entity.User;
 import jobportal.exception.InvalidCredentialsException;
-import jobportal.exception.UsernameNotFoundException;
+import jobportal.exception.UserNotFoundException;
 import jobportal.repository.UserRepository;
 import jobportal.security.JwtService;
 import jobportal.service.AuthService;
@@ -30,11 +30,16 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Email already exists");
         }
 
+        Role role = request.getRole() == null
+                ? Role.JOB_SEEKER
+                : request.getRole();
+
+
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.JOB_SEEKER)
+                .role(role)
                 .build();
 
         userRepository.save(user);
@@ -45,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(
                 request.getPassword(),

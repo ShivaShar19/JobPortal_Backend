@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        System.out.println("Filter executed");
+//        System.out.println("Filter executed");
 
         final String authHeader =
                 request.getHeader("Authorization");
@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader == null ||
                 !authHeader.startsWith("Bearer ")) {
 
-            System.out.println("No Token Found");
+//            System.out.println("No Token Found");
 
             filterChain.doFilter(request, response);
             return;
@@ -47,12 +47,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token =
                 authHeader.substring(7);
 
-        System.out.println("Token: " + token);
+//        System.out.println("Token: " + token);
 
         String email =
                 jwtService.extractUsername(token);
 
-        System.out.println("E-mail: " +email);
+//        System.out.println("E-mail: " +email);
 
         if (email != null &&
                 SecurityContextHolder.getContext()
@@ -79,7 +79,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext()
                         .setAuthentication(authToken);
 
-                System.out.println("Authentication set");
+//                System.out.println("Authentication set");
             }
         }
 
