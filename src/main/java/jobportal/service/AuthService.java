@@ -2,11 +2,13 @@ package jobportal.service;
 
 import jobportal.dto.request.LoginRequest;
 import jobportal.dto.request.RegisterRequest;
+import jobportal.dto.response.ApiResponse;
+import jobportal.dto.response.AuthResponse;
 
 public interface AuthService {
 
-    String register(RegisterRequest request);
+    ApiResponse register(RegisterRequest request);
 
-    String login(LoginRequest request);
+    AuthResponse login(LoginRequest request);
 
 }

@@ -2,8 +2,9 @@ package jobportal.controller;
 
 import jobportal.dto.request.LoginRequest;
 import jobportal.dto.request.RegisterRequest;
+import jobportal.dto.response.ApiResponse;
+import jobportal.dto.response.AuthResponse;
 import jobportal.service.AuthService;
-import jobportal.service.Impl.AuthServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(
+    public ResponseEntity<ApiResponse> register(
             @RequestBody RegisterRequest request) {
 
         return ResponseEntity.ok(
@@ -30,7 +31,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(
+    public ResponseEntity<AuthResponse> login(
             @RequestBody LoginRequest request) {
 
         return ResponseEntity.ok(
