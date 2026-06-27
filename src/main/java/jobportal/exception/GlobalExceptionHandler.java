@@ -52,4 +52,13 @@ public class GlobalExceptionHandler{
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(DuplicateApplicationException.class)
+    public ResponseEntity<String> handleDuplicateApplication(
+            DuplicateApplicationException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
+
 }

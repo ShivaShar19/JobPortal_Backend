@@ -2,7 +2,7 @@ package jobportal.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jobportal.entity.Role;
+import jobportal.entity.enums.Role;
 import lombok.Data;
 
 @Data

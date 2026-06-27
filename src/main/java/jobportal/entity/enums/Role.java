@@ -1,4 +1,4 @@
-package jobportal.entity;
+package jobportal.entity.enums;
 
 public enum Role {
     JOB_SEEKER,

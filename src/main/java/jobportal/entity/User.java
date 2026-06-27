@@ -1,6 +1,7 @@
 package jobportal.entity;
 
 import jakarta.persistence.*;
+import jobportal.entity.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;

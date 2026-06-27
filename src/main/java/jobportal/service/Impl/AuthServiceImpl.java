@@ -4,7 +4,7 @@ import jobportal.dto.request.LoginRequest;
 import jobportal.dto.request.RegisterRequest;
 import jobportal.dto.response.ApiResponse;
 import jobportal.dto.response.AuthResponse;
-import jobportal.entity.Role;
+import jobportal.entity.enums.Role;
 import jobportal.entity.User;
 import jobportal.exception.InvalidCredentialsException;
 import jobportal.exception.UserNotFoundException;
