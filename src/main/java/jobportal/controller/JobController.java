@@ -1,36 +1,35 @@
 package jobportal.controller;
 
-import jakarta.validation.Valid;
-import jobportal.dto.request.JobRequest;
 import jobportal.dto.response.JobResponse;
 import jobportal.service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/recruiter/jobs")
+@RequestMapping("/api/jobs")
 @RequiredArgsConstructor
 public class JobController {
 
     private final JobService jobService;
 
-    @PostMapping
-    public ResponseEntity<JobResponse> createJob(
-            @Valid @RequestBody JobRequest request,
-            Authentication authentication) {
+    @GetMapping
+    public ResponseEntity<List<JobResponse>> getAllJobs() {
+        return ResponseEntity.ok(jobService.getAllJobs());
+    }
 
-        String email = authentication.getName();
+    @GetMapping("/{id}")
+    public ResponseEntity<JobResponse> getJobById(
+            @PathVariable Long id) {
 
         return ResponseEntity.ok(
-                jobService.createJob(
-                        request,
-                        email
-                )
+                jobService.getJobById(id)
         );
     }
+
 }

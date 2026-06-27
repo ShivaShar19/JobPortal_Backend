@@ -35,4 +35,21 @@ public class GlobalExceptionHandler{
                 ));
     }
 
+    @ExceptionHandler(JobNotFoundException.class)
+    public ResponseEntity<String> handleJobNotFound(
+            JobNotFoundException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(JobOwnershipException.class)
+    public ResponseEntity<String> handleJobOwnershipException(
+            JobOwnershipException ex) {
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ex.getMessage());
+    }
+
 }
