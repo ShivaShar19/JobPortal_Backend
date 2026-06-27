@@ -8,6 +8,7 @@ import jobportal.entity.User;
 import jobportal.entity.enums.ApplicationStatus;
 import jobportal.exception.DuplicateApplicationException;
 import jobportal.exception.JobNotFoundException;
+import jobportal.exception.JobOwnershipException;
 import jobportal.exception.UserNotFoundException;
 import jobportal.repository.ApplicationRepository;
 import jobportal.repository.JobRepository;
@@ -91,13 +92,125 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 .jobId(application.getJob().getId())
                                 .jobTitle(application.getJob().getTitle())
                                 .applicantName(application.getJobSeeker().getName())
-                                .applicantEmail(application.getJobSeeker().getName())
+                                .applicantEmail(application.getJobSeeker().getEmail())
                                 .resumeUrl(application.getResumeUrl())
                                 .status(application.getStatus())
                                 .appliedAt(application.getAppliedAt())
                                 .build())
                 .toList();
 
+    }
+
+    @Override
+    public List<ApplicationResponse> getApplicantsForJob(
+            Long jobId,
+            String recruiterEmail) {
+
+        User recruiter = userRepository
+                .findByEmail(recruiterEmail)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "Recruiter not found"));
+
+        Job job = jobRepository
+                .findById(jobId)
+                .orElseThrow(() ->
+                        new JobNotFoundException(
+                                "Job not found"));
+
+        if (!job.getRecruiter().getId()
+                .equals(recruiter.getId())) {
+
+            throw new JobOwnershipException(
+                    "You are not allowed to view applicants for this job");
+        }
+
+        return applicationRepository.findByJobId(jobId)
+                .stream()
+                .map(application ->
+                        ApplicationResponse.builder()
+                                .id(application.getId())
+                                .jobId(application.getJob().getId())
+                                .jobTitle(application.getJob().getTitle())
+                                .applicantName(application.getJobSeeker().getName())
+                                .applicantEmail(application.getJobSeeker().getEmail())
+                                .resumeUrl(application.getResumeUrl())
+                                .status(application.getStatus())
+                                .appliedAt(application.getAppliedAt())
+                                .build())
+                .toList();
+    }
+
+    @Override
+    public ApplicationResponse updateApplicationStatus(
+            Long applicationId,
+            ApplicationStatus status,
+            String recruiterEmail) {
+
+        User recruiter = userRepository
+                .findByEmail(recruiterEmail)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "Recruiter not found"));
+
+        Application application = applicationRepository
+                .findById(applicationId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Application not found"));
+
+        Job job = application.getJob();
+
+        if (!job.getRecruiter()
+                .getId()
+                .equals(recruiter.getId())) {
+
+            throw new JobOwnershipException(
+                    "You can only manage applications for your own jobs");
+        }
+
+        application.setStatus(status);
+
+        Application updatedApplication =
+                applicationRepository.save(application);
+
+        return ApplicationResponse.builder()
+                .id(updatedApplication.getId())
+                .jobId(updatedApplication.getJob().getId())
+                .jobTitle(updatedApplication.getJob().getTitle())
+                .applicantName(updatedApplication.getJobSeeker().getName())
+                .applicantEmail(updatedApplication.getJobSeeker().getEmail())
+                .resumeUrl(updatedApplication.getResumeUrl())
+                .status(updatedApplication.getStatus())
+                .appliedAt(updatedApplication.getAppliedAt())
+                .build();
+    }
+
+    @Override
+    public List<ApplicationResponse> getAllApplicationsForRecruiter(
+            String recruiterEmail) {
+
+        User recruiter = userRepository
+                .findByEmail(recruiterEmail)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "Recruiter not found"));
+
+        return applicationRepository
+                .findByJobRecruiterId(recruiter.getId())
+                .stream()
+                .map(application ->
+                        ApplicationResponse.builder()
+                                .id(application.getId())
+                                .jobId(application.getJob().getId())
+                                .jobTitle(application.getJob().getTitle())
+                                .applicantName(application.getJobSeeker().getName())
+                                .applicantEmail(application.getJobSeeker().getEmail())
+                                .resumeUrl(application.getResumeUrl())
+                                .status(application.getStatus())
+                                .appliedAt(application.getAppliedAt())
+                                .build())
+                .toList();
     }
 
 
