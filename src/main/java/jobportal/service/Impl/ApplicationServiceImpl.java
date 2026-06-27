@@ -14,8 +14,10 @@ import jobportal.repository.ApplicationRepository;
 import jobportal.repository.JobRepository;
 import jobportal.repository.UserRepository;
 import jobportal.service.ApplicationService;
+import jobportal.service.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,11 +29,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
-//    private final ApplicationResponse application;
+    private final FileStorageService fileStorageService;
 
 
     @Override
-    public ApplicationResponse applyForJob(Long jobId, ApplyJobRequest request, String jobSeekerEmail) {
+    public ApplicationResponse applyForJob(Long jobId, MultipartFile resume, String jobSeekerEmail) {
 
         Job job = jobRepository
                 .findById(jobId)
@@ -53,8 +55,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                     "You have already applied for this job");
         }
 
+        String resumePath = fileStorageService.uploadResume(resume);
+
         Application application = Application.builder()
-                .resumeUrl(request.getResumeUrl())
+                .resumeUrl(resumePath)
                 .job(job)
                 .jobSeeker(user)
                 .status(ApplicationStatus.APPLIED)
@@ -67,7 +71,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .id(applicationSaved.getId())
                 .jobId(applicationSaved.getJob().getId())
                 .jobTitle(applicationSaved.getJob().getTitle())
-                .resumeUrl(applicationSaved.getResumeUrl())
+                .resumeUrl("/api/resumes/" + applicationSaved.getResumeUrl())
                 .applicantName(applicationSaved.getJobSeeker().getName())
                 .applicantEmail(applicationSaved.getJobSeeker().getEmail())
                 .status(applicationSaved.getStatus())
@@ -93,7 +97,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 .jobTitle(application.getJob().getTitle())
                                 .applicantName(application.getJobSeeker().getName())
                                 .applicantEmail(application.getJobSeeker().getEmail())
-                                .resumeUrl(application.getResumeUrl())
+                                .resumeUrl("/api/resumes/" + application.getResumeUrl())
                                 .status(application.getStatus())
                                 .appliedAt(application.getAppliedAt())
                                 .build())
@@ -134,7 +138,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 .jobTitle(application.getJob().getTitle())
                                 .applicantName(application.getJobSeeker().getName())
                                 .applicantEmail(application.getJobSeeker().getEmail())
-                                .resumeUrl(application.getResumeUrl())
+                                .resumeUrl("/api/resumes/" + application.getResumeUrl())
                                 .status(application.getStatus())
                                 .appliedAt(application.getAppliedAt())
                                 .build())
@@ -180,7 +184,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .jobTitle(updatedApplication.getJob().getTitle())
                 .applicantName(updatedApplication.getJobSeeker().getName())
                 .applicantEmail(updatedApplication.getJobSeeker().getEmail())
-                .resumeUrl(updatedApplication.getResumeUrl())
+                .resumeUrl("/api/resumes/" + updatedApplication.getResumeUrl())
                 .status(updatedApplication.getStatus())
                 .appliedAt(updatedApplication.getAppliedAt())
                 .build();
@@ -206,7 +210,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 .jobTitle(application.getJob().getTitle())
                                 .applicantName(application.getJobSeeker().getName())
                                 .applicantEmail(application.getJobSeeker().getEmail())
-                                .resumeUrl(application.getResumeUrl())
+                                .resumeUrl("/api/resumes/" + application.getResumeUrl())
                                 .status(application.getStatus())
                                 .appliedAt(application.getAppliedAt())
                                 .build())

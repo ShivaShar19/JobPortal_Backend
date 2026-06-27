@@ -3,12 +3,13 @@ package jobportal.service;
 import jobportal.dto.request.ApplyJobRequest;
 import jobportal.dto.response.ApplicationResponse;
 import jobportal.entity.enums.ApplicationStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface ApplicationService {
 
-    ApplicationResponse applyForJob(Long jobId, ApplyJobRequest request, String jobSeekerEmail);
+    ApplicationResponse applyForJob(Long jobId, MultipartFile resume, String jobSeekerEmail);
 
     List<ApplicationResponse> getMyApplications(String jobSeekerEmail);
 

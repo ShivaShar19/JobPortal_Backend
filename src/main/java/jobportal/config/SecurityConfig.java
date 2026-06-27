@@ -68,13 +68,15 @@ public class SecurityConfig {
                                 "RECRUITER",
                                 "ADMIN"
                         )
-
                         .requestMatchers(
                                 "/api/jobseeker/**"
                         ).hasAnyRole(
                                 "JOB_SEEKER",
                                 "ADMIN"
                         )
+                        .requestMatchers(
+                                "/api/resumes/**"
+                        ).authenticated()
 
                         .anyRequest()
                         .authenticated()

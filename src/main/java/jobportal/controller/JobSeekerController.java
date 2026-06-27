@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,13 +19,14 @@ public class JobSeekerController {
 
     private final ApplicationService applicationService;
 
-    @PostMapping("/jobs/{jobId}/apply")
+    @PostMapping(value = "/jobs/{jobId}/apply", consumes = "multipart/form-data")
     public ResponseEntity<ApplicationResponse> applyForJob(@PathVariable Long jobId,
                                                            @Valid
-                                                           @RequestBody ApplyJobRequest request,
+                                                           @RequestParam("resume")
+                                                           MultipartFile resume,
                                                            Authentication authentication)
     {
-        return ResponseEntity.ok(applicationService.applyForJob(jobId,request,authentication.getName()));
+        return ResponseEntity.ok(applicationService.applyForJob(jobId,resume,authentication.getName()));
     }
 
     @GetMapping("/applications")
