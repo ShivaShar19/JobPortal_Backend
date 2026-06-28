@@ -1,4 +1,6 @@
 package jobportal.dto.response;
 
-public record AuthResponse(String token) {
+import jobportal.entity.enums.Role;
+
+public record AuthResponse(String token, Role role) {
 }

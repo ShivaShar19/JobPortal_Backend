@@ -15,4 +15,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     List<Application> findByJobRecruiterId(Long recruiterId);
 
+    long countByJobRecruiterId(Long recruiterId);
+
+    List<Application> findTop5ByJobRecruiterIdOrderByAppliedAtDesc(Long recruiterId);
+
 }

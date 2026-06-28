@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
                 user.getEmail()
         );
 
-        return new AuthResponse(token);
+        return new AuthResponse(token,user.getRole());
     }
 
 }

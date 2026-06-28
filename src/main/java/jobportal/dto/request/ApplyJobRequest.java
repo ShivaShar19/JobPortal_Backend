@@ -9,4 +9,7 @@ public class ApplyJobRequest {
     @NotBlank
     private String resumeUrl;
 
+    //i can remove this
+
+
 }
