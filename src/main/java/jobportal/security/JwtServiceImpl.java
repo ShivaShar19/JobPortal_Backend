@@ -30,11 +30,11 @@ public class JwtServiceImpl implements JwtService {
     public String generateToken(String email) {
         return Jwts.builder()
                 .subject(email)
-                .issuedAt(new Date(System.currentTimeMillis() + expiration))
+                .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(
                         new Date(
                                 System.currentTimeMillis()
-                                        + 86400000
+                                        + expiration
                         )
                 )
                 .signWith(getSigningKey())

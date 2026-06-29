@@ -24,6 +24,32 @@ public class JobServiceImpl implements JobService {
     private final UserRepository userRepository;
 
     @Override
+    public List<JobResponse> getRecruiterJobs(String recruiterEmail) {
+
+        User recruiter = userRepository
+                .findByEmail(recruiterEmail)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "Recruiter not found"));
+
+        return jobRepository
+                .findByRecruiter(recruiter)
+                .stream()
+                .map(job -> JobResponse.builder()
+                        .id(job.getId())
+                        .title(job.getTitle())
+                        .companyName(job.getCompanyName())
+                        .location(job.getLocation())
+                        .description(job.getDescription())
+                        .salary(job.getSalary())
+                        .jobType(job.getJobType())
+                        .createdAt(job.getCreatedAt())
+                        .build())
+                .toList();
+    }
+
+
+    @Override
     public JobResponse createJob(
             JobRequest request,
             String recruiterEmail) {

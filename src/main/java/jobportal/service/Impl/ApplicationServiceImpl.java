@@ -16,6 +16,7 @@ import jobportal.repository.UserRepository;
 import jobportal.service.ApplicationService;
 import jobportal.service.FileStorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -95,6 +96,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 .id(application.getId())
                                 .jobId(application.getJob().getId())
                                 .jobTitle(application.getJob().getTitle())
+                                .companyName(application.getJob().getCompanyName())
                                 .applicantName(application.getJobSeeker().getName())
                                 .applicantEmail(application.getJobSeeker().getEmail())
                                 .resumeUrl("/api/resumes/" + application.getResumeUrl())
@@ -136,6 +138,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 .id(application.getId())
                                 .jobId(application.getJob().getId())
                                 .jobTitle(application.getJob().getTitle())
+                                .companyName(application.getJob().getCompanyName())
                                 .applicantName(application.getJobSeeker().getName())
                                 .applicantEmail(application.getJobSeeker().getEmail())
                                 .resumeUrl("/api/resumes/" + application.getResumeUrl())
@@ -182,6 +185,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .id(updatedApplication.getId())
                 .jobId(updatedApplication.getJob().getId())
                 .jobTitle(updatedApplication.getJob().getTitle())
+                .companyName(application.getJob().getCompanyName())
                 .applicantName(updatedApplication.getJobSeeker().getName())
                 .applicantEmail(updatedApplication.getJobSeeker().getEmail())
                 .resumeUrl("/api/resumes/" + updatedApplication.getResumeUrl())
@@ -208,6 +212,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 .id(application.getId())
                                 .jobId(application.getJob().getId())
                                 .jobTitle(application.getJob().getTitle())
+                                .companyName(application.getJob().getCompanyName())
                                 .applicantName(application.getJobSeeker().getName())
                                 .applicantEmail(application.getJobSeeker().getEmail())
                                 .resumeUrl("/api/resumes/" + application.getResumeUrl())
@@ -215,6 +220,36 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 .appliedAt(application.getAppliedAt())
                                 .build())
                 .toList();
+    }
+
+    @Override
+    public void withdrawApplication(Long applicationId) {
+
+        System.out.println("Withdraw endpoint called");
+        System.out.println("Application Id = " + applicationId);
+
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Application application = applicationRepository
+                .findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        System.out.println("Logged User Id = " + user.getId());
+        System.out.println("Application Owner Id = " +
+                application.getJobSeeker().getId());
+
+        if (!application.getJobSeeker().getId().equals(user.getId())) {
+            throw new RuntimeException(
+                    "You can only withdraw your own application");
+        }
+
+        applicationRepository.delete(application);
     }
 
 

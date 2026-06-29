@@ -19,4 +19,6 @@ public interface ApplicationService {
 
     List<ApplicationResponse> getAllApplicationsForRecruiter(String recruiterEmail);
 
+    void withdrawApplication(Long applicationId);
+
 }

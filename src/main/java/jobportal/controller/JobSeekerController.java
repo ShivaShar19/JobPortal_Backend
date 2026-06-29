@@ -41,4 +41,13 @@ public class JobSeekerController {
         );
     }
 
+    @DeleteMapping("/{applicationId}")
+    public ResponseEntity<String> withdrawApplication(
+            @PathVariable Long applicationId) {
+
+        applicationService.withdrawApplication(applicationId);
+
+        return ResponseEntity.ok("Application withdrawn successfully");
+    }
+
 }

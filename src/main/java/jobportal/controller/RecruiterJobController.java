@@ -23,6 +23,17 @@ public class RecruiterJobController {
     private final JobService jobService;
     private final ApplicationService applicationService;
 
+    @GetMapping
+    public ResponseEntity<List<JobResponse>> getRecruiterJobs(
+            Authentication authentication) {
+
+        return ResponseEntity.ok(
+                jobService.getRecruiterJobs(
+                        authentication.getName()
+                )
+        );
+    }
+
     @PostMapping
     public ResponseEntity<JobResponse> createJob(
             @Valid @RequestBody JobRequest request,

@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface JobService {
 
+    List<JobResponse> getRecruiterJobs(String recruiterEmail);
+
     JobResponse createJob(JobRequest request, String recruiterEmail);
 
     List<JobResponse> getAllJobs();
