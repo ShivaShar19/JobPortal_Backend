@@ -61,4 +61,13 @@ public class GlobalExceptionHandler{
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(InvalidStatusTransitionException.class)
+    public ResponseEntity<String> handleInvalidStatusTransition(
+            InvalidStatusTransitionException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(ex.getMessage());
+    }
+
 }

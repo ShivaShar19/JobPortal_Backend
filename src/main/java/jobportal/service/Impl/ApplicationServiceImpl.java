@@ -6,10 +6,7 @@ import jobportal.entity.Application;
 import jobportal.entity.Job;
 import jobportal.entity.User;
 import jobportal.entity.enums.ApplicationStatus;
-import jobportal.exception.DuplicateApplicationException;
-import jobportal.exception.JobNotFoundException;
-import jobportal.exception.JobOwnershipException;
-import jobportal.exception.UserNotFoundException;
+import jobportal.exception.*;
 import jobportal.repository.ApplicationRepository;
 import jobportal.repository.JobRepository;
 import jobportal.repository.UserRepository;
@@ -176,6 +173,42 @@ public class ApplicationServiceImpl implements ApplicationService {
                     "You can only manage applications for your own jobs");
         }
 
+        ApplicationStatus currentStatus = application.getStatus();
+
+        // Final statuses cannot be changed
+        if (currentStatus == ApplicationStatus.HIRED ||
+                currentStatus == ApplicationStatus.REJECTED) {
+
+            throw new InvalidStatusTransitionException(
+                    "Final status cannot be changed");
+        }
+
+        // APPLIED -> REVIEWED
+        if (currentStatus == ApplicationStatus.APPLIED &&
+                status != ApplicationStatus.REVIEWED) {
+
+            throw new InvalidStatusTransitionException(
+                    "APPLIED can only be changed to REVIEWED");
+        }
+
+        // REVIEWED -> SHORTLISTED or REJECTED
+        if (currentStatus == ApplicationStatus.REVIEWED &&
+                status != ApplicationStatus.SHORTLISTED &&
+                status != ApplicationStatus.REJECTED) {
+
+            throw new InvalidStatusTransitionException(
+                    "REVIEWED can only be changed to SHORTLISTED or REJECTED");
+        }
+
+        // SHORTLISTED -> HIRED or REJECTED
+        if (currentStatus == ApplicationStatus.SHORTLISTED &&
+                status != ApplicationStatus.HIRED &&
+                status != ApplicationStatus.REJECTED) {
+
+            throw new InvalidStatusTransitionException(
+                    "SHORTLISTED can only be changed to HIRED or REJECTED");
+        }
+
         application.setStatus(status);
 
         Application updatedApplication =
@@ -185,7 +218,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .id(updatedApplication.getId())
                 .jobId(updatedApplication.getJob().getId())
                 .jobTitle(updatedApplication.getJob().getTitle())
-                .companyName(application.getJob().getCompanyName())
+                .companyName(updatedApplication.getJob().getCompanyName())
                 .applicantName(updatedApplication.getJobSeeker().getName())
                 .applicantEmail(updatedApplication.getJobSeeker().getEmail())
                 .resumeUrl("/api/resumes/" + updatedApplication.getResumeUrl())
